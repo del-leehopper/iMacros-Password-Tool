@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Encryption Tool</title>
+    <script src="rijndael.js"></script>
+    <script src="enc.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { width: 50%; margin: 0 auto; }
+        label { font-weight: bold; display: block; margin: 10px 0 5px; }
+        input[type="text"], input[type="password"], textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+        textarea { resize: none; }
+        button { padding: 10px 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Password Encryption Tool</h1>
+        <div>
+            <label for="master-password">Master Password:</label>
+            <input type="password" id="master-password-input" placeholder="Enter master password">
+
+            <label for="encrypt-input">Password to Encrypt:</label>
+            <input type="text" id="encrypt-input" placeholder="Enter password to encrypt">
+
+            <button onclick="onEncrypt()">Encrypt Password</button>
+
+            <label for="encrypted-output">Encrypted Password:</label>
+            <textarea id="result" rows="4" readonly></textarea>
+        </div>
+
+        <hr>
+
+        <div>
+            <h2>Decrypt Password</h2>
+            <label for="decrypt-master-password">Master Password:</label>
+            <input type="password" id="decrypt-master-password-input" placeholder="Enter master password">
+
+            <label for="decrypt-input">Encrypted Password:</label>
+            <textarea id="decrypt-input" rows="4" placeholder="Enter encrypted password"></textarea>
+
+            <button onclick="onDecrypt()">Decrypt Password</button>
+
+            <label for="decrypted-output">Decrypted Password:</label>
+            <textarea id="decrypted-result" rows="4" readonly></textarea>
+        </div>
+    </div>
+
+    <script>
+        // This function is used to encrypt the password
+        function onEncrypt() {
+            try {
+                var password = document.getElementById("master-password-input").value;
+                var plaintext = document.getElementById("encrypt-input").value;
+                
+                // Validate input
+                if (password.length < 3) {
+                    alert("Master password should have at least 3 characters.");
+                    return;
+                }
+                if (plaintext.trim() === "") {
+                    alert("Password to encrypt cannot be empty.");
+                    return;
+                }
+
+                // Encrypt the password using Rijndael.encryptString
+                var encryptedPassword = Rijndael.encryptString(plaintext, password);
+                
+                // Display the encrypted password
+                document.getElementById("result").value = encryptedPassword;
+            } catch (e) {
+                alert("Error: " + e);
+            }
+        }
+
+        // This function is used to decrypt the password
+        function onDecrypt() {
+            try {
+                var password = document.getElementById("decrypt-master-password-input").value;
+                var ciphertext = document.getElementById("decrypt-input").value;
+
+                // Validate input
+                if (password.trim() === "") {
+                    alert("Master password cannot be empty.");
+                    return;
+                }
+                if (ciphertext.trim() === "") {
+                    alert("Encrypted password cannot be empty.");
+                    return;
+                }
+
+                // Decrypt the password using Rijndael.decryptString
+                var decryptedPassword = Rijndael.decryptString(ciphertext, password);
+
+                // Display the decrypted password
+                document.getElementById("decrypted-result").value = decryptedPassword;
+            } catch (e) {
+                alert("Error: " + e.message);
+                document.getElementById("decrypted-result").value = "";
+            }
+        }
+    </script>
+</body>
+</html>
